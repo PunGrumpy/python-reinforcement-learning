@@ -54,6 +54,10 @@ class QLearningAgent:
                 # 1 = Down
                 # 2 = Right
                 # 3 = Up
+
+                # อัปเดตตาราง Q โดยใช้สมการ Bellman Optimality Equation
+                # โดยใช้สูตร Q(s,a) = Q(s,a) + learning_rate * (reward + discount_rate * max(Q(s',a')) - Q(s,a))
+                # โดย Q(s',a') คือค่า Q ที่ดีที่สุดของ state ใหม่
                 self.QTable[state][action] = self.QTable[state][
                     action
                 ] + self.learning_rate * (
