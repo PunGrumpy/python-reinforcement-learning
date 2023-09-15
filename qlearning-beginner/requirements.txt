@@ -1,0 +1,6 @@
+gym==0.24
+tqdm
+numpy
+pygame
+imageio
+imageio_ffmpeg
