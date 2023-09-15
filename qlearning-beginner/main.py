@@ -27,10 +27,11 @@ class QLearningAgent:
 
     def epsilon_greedy_policy(self, env, state, epsilon):
         # ทำการเลือก action จาก QTable โดยมีความน่าจะเป็น epsilon ที่จะเลือก action แบบสุ่ม
+        # ถ้า random.uniform(0, 1) > epsilon จะเลือก action ที่ดีที่สุด แต่ถ้าน้อยกว่า epsilon จะเลือก action แบบสุ่ม
         if random.uniform(0, 1) > epsilon:
             action = np.argmax(self.QTable[state])
         else:
-            action = env.action_space.sample()
+            action = env.action_space.sample()  # สุ่ม action จาก env
         return action
 
     def train(self, env, episodes, max_steps):
@@ -42,10 +43,15 @@ class QLearningAgent:
             state = env.reset()
 
             for step in range(max_steps):
+                # เอา state ปัจจุบันไปหา action ที่ดีที่สุด
                 action = self.epsilon_greedy_policy(env, state, epsilon)
                 # ทำการเล่นเกม 1 step จาก action ที่ได้จาก policy
                 new_state, reward, done, info = env.step(action)
-
+                # Step:
+                # 0 = Left
+                # 1 = Down
+                # 2 = Right
+                # 3 = Up
                 self.QTable[state][action] = self.QTable[state][
                     action
                 ] + self.learning_rate * (
@@ -78,6 +84,11 @@ class QLearningAgent:
                 # เอา state ปัจจุบันไปหา action ที่ดีที่สุด
                 action = np.argmax(QTable[state][:])
                 new_state, reward, done, info = env.step(action)
+                # Step:
+                # 0 = Left
+                # 1 = Down
+                # 2 = Right
+                # 3 = Up
                 total_rewards += reward
 
                 if done:
