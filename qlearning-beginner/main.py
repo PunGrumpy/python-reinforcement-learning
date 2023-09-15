@@ -105,7 +105,7 @@ class QLearningAgent:
             image = env.render(mode="rgb_array")
             images.append(image)
         imageio.mimsave(
-            out_directory, [np.array(img) for i, img in enumerate(images)], fps=fps
+            out_directory, [np.array(img) for i, img in enumerate(images)], duration=fps
         )
 
 
@@ -133,4 +133,4 @@ if __name__ == "__main__":
     print(f"Mean Reward: {mean_reward} +/- {std_reward}")
 
     # บันทึกวิดีโอ
-    agent.record_video(env, "frozenlake_qlearning.mp4", fps=1)
+    agent.record_video(env, "frozenlake_qlearning.gif", fps=100)
