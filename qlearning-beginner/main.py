@@ -37,6 +37,8 @@ class QLearningAgent:
     def train(self, env, episodes, max_steps):
         # ทำการเทรน agent ให้เรียนรู้จากการเล่นเกม
         for episode in trange(episodes):
+            # หาค่า epsilon ที่จะใช้ในการเลือก action โดยใช้สูตร exponential decay
+            # exponential decay คือ การลดค่า epsilon ลงเรื่อยๆ จนกว่าจะถึงค่า min_epsilon
             epsilon = self.min_epsilon + (self.max_epsilon - self.min_epsilon) * np.exp(
                 -self.epsilon_decay_rate * episode
             )
