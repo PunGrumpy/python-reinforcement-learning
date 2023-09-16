@@ -150,4 +150,4 @@ if __name__ == "__main__":
     print(f"Mean Reward: {mean_reward} +/- {std_reward}")
 
     # บันทึกวิดีโอ
-    agent.record_video(env, "frozenlake_qlearning.gif", fps=100)
+    agent.record_video(env, "frozen_lake.gif", fps=100)

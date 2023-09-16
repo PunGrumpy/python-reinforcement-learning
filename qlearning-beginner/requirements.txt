@@ -4,3 +4,4 @@ numpy
 pygame
 imageio
 imageio_ffmpeg
+IPython
