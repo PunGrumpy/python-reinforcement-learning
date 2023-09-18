@@ -7,59 +7,80 @@ class QLearningAgent:
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
 
+        # Initialize Q-table with zeros
         self.MAX_SIZE = len(self.env.location_to_state)
-        self.q_table = np.zeros((self.MAX_SIZE, self.MAX_SIZE), dtype=None, order="C")
+        self.q_table = np.zeros((self.MAX_SIZE, self.MAX_SIZE), dtype=float)
 
     def training(self, start_location, end_location, iterations):
         rewards_new = np.copy(self.env.rewards)
 
+        # Set a high reward for reaching the end location
         ending_state = self.env.location_to_state[end_location]
         rewards_new[ending_state, ending_state] = 999
 
-        # Picking a random current state
-        for _ in range(iterations):
-            current_state = np.random.randint(0, 9)
+        for step in range(iterations):
+            print(f"Step {step + 1}/{iterations}")
+
+            # Choose a random current state
+            current_state = np.random.randint(0, self.MAX_SIZE)
+            print(f"Current State: {self.env.state_to_location[current_state]}")
+
             playable_actions = []
 
-            # Find all playable actions / rewards
+            # Find all playable actions (states with positive rewards)
             for j in range(self.MAX_SIZE):
                 if rewards_new[current_state, j] > 0:
                     playable_actions.append(j)
 
-            # Choose a random next state
-            next_state = np.random.choice(playable_actions)
+            print(
+                f"Playable Actions: {list(map(self.env.state_to_location.get, playable_actions))}"
+            )
 
-            # Find temporal difference
+            # Choose a random next state from playable actions
+            next_state = np.random.choice(playable_actions)
+            print(f"Next State: {next_state}")
+
+            # Calculate the Temporal Difference (TD) error
             TD = (
                 rewards_new[current_state, next_state]
-                + self.discount_factor
-                * self.q_table[next_state, np.argmax(self.q_table[next_state,])]
+                + self.discount_factor * np.max(self.q_table[next_state, :])
                 - self.q_table[current_state, next_state]
             )
 
-            # Bellman equation: Q(s,a) = Q(s,a) + learning_rate * (reward + discount_factor * max(Q(s',a')) - Q(s,a))
+            print(f"Temporal Difference (TD): {TD}")
+
+            # Update Q-value using the Q-learning formula
             self.q_table[current_state, next_state] += self.learning_rate * TD
 
-        route = [start_location]  # Define the route as the start location
-        next_location = start_location  # Define the next location as the start location
+            print(f"Updated Q-Value: {self.q_table[current_state, next_state]}\n")
 
-        self.get_optimal_route(
-            start_location, end_location, next_location, route, self.q_table
-        )
+        # Find and print the optimal route
+        optimal_route = self.find_optimal_route(start_location, end_location)
+        print("Optimal Route:", optimal_route)
 
-    def get_optimal_route(self, start_location, end_location, next_location, route, Q):
-        while next_location != end_location:
-            start_state = self.env.location_to_state[start_location]
-            # Find the next state by finding the max Q value
-            next_state = np.argmax(Q[start_state,])
+    def find_optimal_route(self, start_location, end_location):
+        route = [start_location]
+        current_location = start_location
+
+        while current_location != end_location:
+            current_state = self.env.location_to_state[current_location]
+
+            # Get Q-values for the current state
+            q_values = self.q_table[current_state, :]
+
+            # Find the action (next state) with the highest Q-value
+            next_state = np.argmax(q_values)
+
+            # Explain the decision
+            print(f"Current Location: {current_location}")
+            print(
+                f"Q-Values for Current State: {list(zip(self.env.state_to_location.values(), q_values.round(0)))}"
+            )
+            print(f"Choosing Next State: {next_state}")
+
             next_location = self.env.state_to_location[next_state]
-            route.append(next_location)
-            start_location = next_location
 
-        print(
-            route.__str__()
-            .replace(",", " ->")
-            .replace("[", "")
-            .replace("]", "")
-            .replace("'", "")
-        )
+            route.append(next_location)
+            current_location = next_location
+
+        return route
