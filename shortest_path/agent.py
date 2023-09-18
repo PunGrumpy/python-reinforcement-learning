@@ -24,6 +24,7 @@ class QLearningAgent:
             # Choose a random current state
             current_state = np.random.randint(0, self.MAX_SIZE)
             print(f"Current State: {self.env.state_to_location[current_state]}")
+            print(f"Q-Table:\n {self.q_table}\n")
 
             playable_actions = []
 
